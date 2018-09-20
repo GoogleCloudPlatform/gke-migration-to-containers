@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Copyright 2018 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# A newly booted VM will need to update package lists
+sudo apt-get update
+
+# Debian9 comes wth python2.7 by default, this installs the appropriate pip
+sudo apt-get install python-pip -y
+
+# Create a user to run the application
+sudo adduser apprunner
+
+# Download the artifact
+sudo mkdir /prime
+gsutil cp gs://${bucket}/${version}/flask-prime.tgz /prime/flask-prime.tgz
+cd /prime
+sudo tar xzvf flask-prime.tgz
+sudo /prime/install.sh
+sudo chown -R apprunner:apprunner /prime
+
+# Create a service to run and manage the process
+sudo cp primeserver.service /lib/systemd/system
+sudo systemctl start primeserver
+# Enable the service so it will start on reboot
+sudo systemctl enable primeserver
