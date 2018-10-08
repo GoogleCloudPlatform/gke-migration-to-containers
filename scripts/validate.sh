@@ -16,26 +16,9 @@
 # bash "strict-mode", fail immediately if there is a problem
 set -euo pipefail
 
-# command -v curl || { "ERROR: curl not installed!" && exit 1 }
-
-SCRIPT_HOME=$(dirname "${BASH_SOURCE[0]}")
-
-# terraform_output() - extracts an output from the terraform state file and
-# prints to stdout the value at the given key
-# usage:
-# terraform_output <key>
-# Where:
-#   <key> is a valid key in the terraform state file
-# Returns:
-#     0 - when no errors
-terraform_output() {
-  STATE_KEY=$1
-  cd "${SCRIPT_HOME}/terraform" || true
-  SERVER_ADDRESS=$(terraform output "${STATE_KEY}")
-  echo "$SERVER_ADDRESS"
-  cd - > /dev/null
-  return 0
-}
+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+# shellcheck source=scripts/common.sh
+source "$ROOT/scripts/common.sh"
 
 # health_check() - Wait for a server to respond with a 200 status code at  a
 # given endpoint.  It will periodically retry until the MAX_TIME is exceeded.
@@ -79,25 +62,25 @@ health_check() {
 #       than 10
 #   1 - when the server responsds with an incorrect answer
 validate_prime() {
-SERVER_ADDRESS=$1
-# Construct the test URL
-PRIME_TEST="${SERVER_ADDRESS}/prime/10"
+  SERVER_ADDRESS=$1
+  # Construct the test URL
+  PRIME_TEST="${SERVER_ADDRESS}/prime/10"
 
-# Test the URL
-PRIME_RESPONSE=$(curl "${PRIME_TEST}" 2>/dev/null)
+  # Test the URL
+  PRIME_RESPONSE=$(curl "${PRIME_TEST}" 2>/dev/null)
 
-# Extract the answer from the server response
-SUM=$(echo "${PRIME_RESPONSE}" | tr " " "\\n" | tail -n1)
+  # Extract the answer from the server response
+  SUM=$(echo "${PRIME_RESPONSE}" | tr " " "\\n" | tail -n1)
 
-# Make sure that 'Sum of primes less than 10' == 17
-if [[ "${SUM}" != "17" ]]; then
-  echo "ERROR: Sum of Primes less than 10 is 17, got ${SUM}"
-  return 1
-fi
+  # Make sure that 'Sum of primes less than 10' == 17
+  if [[ "${SUM}" != "17" ]]; then
+    echo "ERROR: Sum of Primes less than 10 is 17, got ${SUM}"
+    return 1
+  fi
 
-# If we have made it this far, all is good, output the server responses.
-echo "${PRIME_RESPONSE}"
-return 0
+  # If we have made it this far, all is good, output the server responses.
+  echo "${PRIME_RESPONSE}"
+  return 0
 }
 
 # validate_factorial() - validate that the factorial server returns the correct
@@ -110,24 +93,24 @@ return 0
 #   0 - when the server responds with the correct answer for 10!
 #   1 - when the server responsds with an incorrect answer for 10!
 validate_factorial() {
-SERVER_ADDRESS=$1
-# Construct the test URL
-FACTORIAL_TEST="${SERVER_ADDRESS}/factorial/10"
+  SERVER_ADDRESS=$1
+  # Construct the test URL
+  FACTORIAL_TEST="${SERVER_ADDRESS}/factorial/10"
 
-# Test the URL
-FACTORIAL_RESPONSE=$(curl "${FACTORIAL_TEST}" 2>/dev/null)
+  # Test the URL
+  FACTORIAL_RESPONSE=$(curl "${FACTORIAL_TEST}" 2>/dev/null)
 
-# Extract the answer from the server response
-FACTORIAL=$(echo "${FACTORIAL_RESPONSE}" | tr " " "\\n" | tail -n1)
+  # Extract the answer from the server response
+  FACTORIAL=$(echo "${FACTORIAL_RESPONSE}" | tr " " "\\n" | tail -n1)
 
-# Make sure that 10! == 3628800
-if [[ "${FACTORIAL}" != "3628800" ]]; then
-  echo "ERROR: Factorial of 10 is 3628800, got ${FACTORIAL}"
-  return 1
-fi
+  # Make sure that 10! == 3628800
+  if [[ "${FACTORIAL}" != "3628800" ]]; then
+    echo "ERROR: Factorial of 10 is 3628800, got ${FACTORIAL}"
+    return 1
+  fi
 
-# If we have made it this far, all is good, output the server responses.
-echo "${FACTORIAL_RESPONSE}"
+  # If we have made it this far, all is good, output the server responses.
+  echo "${FACTORIAL_RESPONSE}"
 }
 
 # validate_deployment() - given a server address, it runs health_check(),
@@ -139,15 +122,17 @@ validate_deployment() {
   validate_factorial "${ADDRESS}"
 }
 
+check_dependency_installed terraform
+
 # Each of the three deployments are validated
 echo ""
 echo "Validating Debian VM Webapp..."
-SERVER_ADDRESS=$(terraform_output web_server_address)
+SERVER_ADDRESS=$(cd "$ROOT/terraform" && terraform output web_server_address)
 validate_deployment "$SERVER_ADDRESS"
 
 echo ""
 echo "Validating Container OS Webapp..."
-SERVER_ADDRESS=$(terraform_output cos_server_address)
+SERVER_ADDRESS=$(cd "$ROOT/terraform" && terraform output cos_server_address)
 validate_deployment "$SERVER_ADDRESS"
 
 echo ""
