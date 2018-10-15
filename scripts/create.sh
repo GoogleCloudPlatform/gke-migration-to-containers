@@ -43,7 +43,7 @@ wait_for_cluster() {
   # and loop-retry waiting for the endpoint to become healthy.
 
   echo "===================================================="
-  echo "Initializing the test application. Please be patient, it takes a few \
+  echo "Initializing the test application. Please be patient, it takes a few\
   minutes to complete."
   echo "===================================================="
 
@@ -83,7 +83,7 @@ wait_for_cluster() {
       done
       echo ""
       echo "SUCCESS! $SERVER_ADDRESS is now healthy"
-      exit 0
+      break
     fi
     if [[ "${ELAPSED}" -gt "${MAX_TIME}" ]]; then
       echo "ERROR: ${MAX_TIME} seconds exceeded, no response from kubernetes api."
@@ -93,6 +93,29 @@ wait_for_cluster() {
     sleep "$SLEEP"
     ELAPSED=$(( ELAPSED + SLEEP ))
   done
+}
+
+wait_for_service() {
+  echo "** Checking for Kubernetes service **"
+  RESPONSE=""
+  EXPECTED="Server successfully started!"
+  for _ in {1..60}
+  do
+    # Test service availability
+    RESPONSE=$(curl -s "$IP_ADDRESS/")
+    [ "$RESPONSE" = "$EXPECTED" ] && break
+    sleep 2
+    echo "Waiting for service availability..."
+  done
+
+  if [ "$RESPONSE" != "$EXPECTED" ]
+  then
+    echo "ERROR - Service failed to start correctly within allotted time"
+    echo "=> $RESPONSE"
+    exit 1
+  fi
+
+  echo "** Kubernetes service is up! ** "
 }
 
 run_build() {
@@ -135,3 +158,5 @@ run_terraform
 kubectl apply -f "${ROOT}/terraform/manifests/" --namespace default
 
 wait_for_cluster
+
+wait_for_service

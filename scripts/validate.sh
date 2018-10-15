@@ -119,7 +119,7 @@ validate_deployment() {
   ADDRESS=$1
   health_check "${ADDRESS}"
   validate_prime "${ADDRESS}"
-  validate_factorial "${ADDRESS}"
+  # validate_factorial "${ADDRESS}"
 }
 
 check_dependency_installed terraform
