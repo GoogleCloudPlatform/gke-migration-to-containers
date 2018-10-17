@@ -14,6 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// Provides access to available Google Container Engine versions in a zone for a given project.
+// https://www.terraform.io/docs/providers/google/d/google_container_engine_versions.html
+data "google_container_engine_versions" "on-prem" {
+  zone    = "${var.zone}"
+  project = "${var.project}"
+}
+
 // https://www.terraform.io/docs/providers/template/index.html
 // This block defines the startup script used to pull a container
 // image from a private repo and install it as a systemd service.
@@ -117,7 +124,7 @@ resource "google_container_cluster" "prime_cluster" {
   name                = "${var.cluster_name}"
   zone                = "${var.zone}"
   project             = "${var.project}"
-  min_master_version  = "${var.min_master_version}"
+  min_master_version  = "${data.google_container_engine_versions.on-prem.latest_master_version}"
   initial_node_count  = 2
 }
 
