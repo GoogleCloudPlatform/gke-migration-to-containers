@@ -26,12 +26,6 @@ variable "machine_type" {
   default = "f1-micro"
 }
 
-variable "min_master_version" {
-  description = "The minimum version to use for cluster masters"
-  type        = "string"
-  default     = "1.10"
-}
-
 variable "project" {
   type = "string"
 }
