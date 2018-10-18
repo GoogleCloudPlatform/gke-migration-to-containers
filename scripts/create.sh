@@ -99,15 +99,33 @@ wait_for_service() {
   echo "** Checking for Kubernetes service **"
   RESPONSE=""
   EXPECTED="Server successfully started!"
+  COUNTER=0
   for _ in {1..60}
   do
-    # Test service availability
-    RESPONSE=$(curl -s "$IP_ADDRESS/")
-    [ "$RESPONSE" = "$EXPECTED" ] && break
-    sleep 2
-    echo "Waiting for service availability..."
+    # An ingress is created that has two backends, they do not become healthy
+    # at once, and some subsequent calls lead to 404. We want to check service
+    # endpoint to respond and stop giving 404 at least 20 times.
+    echo -ne 'waiting for endpoint to become healthy: |\r'
+    sleep 1
+    echo -ne 'waiting for endpoint to become healthy: /\r'
+    sleep 1
+    echo -ne 'waiting for endpoint to become healthy: -\r'
+    sleep 1
+    echo -ne 'waiting for endpoint to become healthy: \\\r'
+    sleep 1
+    if [[ "$(curl -s -o /dev/null -w "%{http_code}" "$IP_ADDRESS"/)" == \
+     "200" ]]; then
+      COUNTER=$((COUNTER+1))
+      if [ "$COUNTER" == 10 ]; then
+        break
+      fi
+    else
+      COUNTER=0 # Our counter needs to be reset until we get only 200's for 20
+                # consecutive times
+    fi
   done
 
+  RESPONSE=$(curl -s "$IP_ADDRESS/")
   if [ "$RESPONSE" != "$EXPECTED" ]
   then
     echo "ERROR - Service failed to start correctly within allotted time"
