@@ -39,7 +39,7 @@ spec:
     - cat
     tty: true
     volumeMounts:
-    # Mount the docker.sock file so we can communicate wth the local docker
+    # Mount the docker.sock file so we can communicate with the local docker
     # daemon
     - name: docker-sock-volume
       mountPath: /var/run/docker.sock
@@ -65,35 +65,36 @@ spec:
   }
 
   environment {
-        GOOGLE_APPLICATION_CREDENTIALS    = '/home/jenkins/dev/jenkins-deploy-dev-infra.json'
-    }
+    GOOGLE_APPLICATION_CREDENTIALS    = '/home/jenkins/dev/jenkins-deploy-dev-infra.json'
+  }
+
 
   stages {
-    stage('Setup access') {
+    stage('Lint') {
+      steps {
+        container('k8s-node') {
+          sh "make lint"
+        }
+      }
+    }
+
+    stage('Setup') {
       steps {
         container('k8s-node') {
           script {
-            // env.CLUSTER_ZONE will need to be updated to match the
-            // ZONE in the jenkins.propeties file
-            env.CLUSTER_ZONE = "${CLUSTER_ZONE}"
-            // env.PROJECT_ID will need to be updated to match your GCP
-            // development project id
+            env.ZONE = "${ZONE}"
             env.PROJECT_ID = "${PROJECT_ID}"
+            env.REGION = "${REGION}"
+            env.KEYFILE = GOOGLE_APPLICATION_CREDENTIALS
           }
           // Setup gcloud service account access
-          sh "gcloud auth activate-service-account --key-file=${env.GOOGLE_APPLICATION_CREDENTIALS}"
-          sh "gcloud config set compute/zone ${env.CLUSTER_ZONE}"
+          sh "gcloud auth activate-service-account --key-file=${env.KEYFILE}"
+          sh "gcloud config set compute/zone ${env.ZONE}"
           sh "gcloud config set core/project ${env.PROJECT_ID}"
+          sh "gcloud config set compute/region ${env.REGION}"
+
          }
         }
-    }
-
-    stage('Code linting') {
-      steps {
-        container('k8s-node') {
-          sh "make"
-        }
-      }
     }
 
     stage('Create') {
@@ -116,8 +117,8 @@ spec:
   post {
     always {
       container('k8s-node') {
-        sh 'make teardown'
-        sh 'gcloud auth revoke'
+        sh "make teardown"
+        sh "gcloud auth revoke"
       }
     }
   }

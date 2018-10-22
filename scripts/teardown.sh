@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 # Copyright 2018 Google LLC
 #
@@ -13,7 +13,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-export DIR="build"
-[ -d $DIR ] || mkdir $DIR
-cd container || exit 1
-tar -cvzf ../"${DIR}"/flask-prime.tgz .
+# Stop immediately if something goes wrong
+set -euo pipefail
+
+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+# shellcheck source=scripts/common.sh
+source "$ROOT/scripts/common.sh"
+
+VERSION=$(cat "${ROOT}/VERSION")
+
+rm -f "${ROOT}/terraform/manifests/prime-server-deployment.yaml"
+
+check_dependency_installed terraform
+
+(cd "${ROOT}/terraform" && terraform destroy \
+   -var version="$VERSION" -auto-approve)

@@ -36,3 +36,5 @@ crash.log
 #
 # example.tfvars
 *.tfvars
+prime-server-deployment.yaml
+flask-prime.tgz

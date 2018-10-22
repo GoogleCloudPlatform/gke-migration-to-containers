@@ -21,20 +21,14 @@
 #   DEPENDENCY - The command to verify is installed.
 # Returns:
 #   None
-dependency_installed () {
-  command -v "${1}" >/dev/null 2>&1 || exit 1
+check_dependency_installed () {
+  command -v "${1}" >/dev/null 2>&1 || { \
+  echo >&2 "${1} is required but is not installed. Aborting."; exit 1; }
 }
 
-SCRIPT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if ! dependency_installed "python" ; then
-  echo "I require python but it's not installed. Aborting."
-  exit 1
-fi
+check_dependency_installed "python"
+check_dependency_installed "pip"
 
-if ! dependency_installed "pip" ; then
-  echo "I require pip but it's not installed. Aborting."
-  exit 1
-fi
-
-pip install -r "${SCRIPT_HOME}/requirements.txt"
+pip install -r "${ROOT}/requirements.txt"

@@ -34,9 +34,11 @@ set -euo pipefail
 # The purpose of this script is to populate variables for subsequent terraform
 # commands.
 
-# glcoud is required for this tutorial
-command -v gcloud >/dev/null 2>&1 || { \
- echo >&2 "I require gcloud but it's not installed.  Aborting."; exit 1; }
+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+# shellcheck source=scripts/common.sh
+source "$ROOT/scripts/common.sh"
+
+check_dependency_installed gcloud
 
 # gcloud config holds values related to your environment. If you already
 # defined a default zone we will retrieve it and use it
@@ -49,22 +51,8 @@ if [[ -z "${ZONE}" ]]; then
     exit 1;
 fi
 
-# gcloud config holds values related to your environment. If you already
-# defined a default project we will retrieve it and use it
-PROJECT="$(gcloud config get-value core/project)"
-if [[ -z "${PROJECT}" ]]; then
-    echo "gcloud cli must be configured with a default project." 1>&2
-    echo "run 'gcloud config set core/project PROJECT'." 1>&2
-    echo "replace 'PROJECT' with the project name." 1>&2
-    exit 1;
-fi
-
-PROJECT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-
-TFVARS_FILE="${PROJECT_DIR}/terraform/terraform.tfvars"
-
 # Write out the file now in the terraform directory.
-cat <<EOF > "${TFVARS_FILE}"
+cat <<EOF > "${ROOT}/terraform/terraform.tfvars"
 project="${PROJECT}"
 zone="${ZONE}"
 EOF

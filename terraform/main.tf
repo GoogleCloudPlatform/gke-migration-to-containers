@@ -116,7 +116,7 @@ resource "google_compute_instance" "container_server" {
     scopes = ["storage-ro"]
   }
 
-  }
+}
 
 // The Kubernetes Engine cluster used to deploy the application
 // https://www.terraform.io/docs/providers/google/r/container_cluster.html
@@ -211,7 +211,7 @@ resource "google_storage_bucket_object" "artifact" {
   name          = "${var.version}/flask-prime.tgz"
   source        = "../build/flask-prime.tgz"
   bucket        = "${google_storage_bucket.artifact_store.name}"
-  // TODO: ignore lifescycle something so old versions don't get deleted
+  // TODO: ignore lifecycle something so old versions don't get deleted
 }
 
 data "template_file" "web_init" {
