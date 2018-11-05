@@ -71,6 +71,11 @@ Also included is a utility to validate a successful deployment.
 
 ## Prerequisites
 
+### Get The Code
+
+* [Fork the repo](https://help.github.com/articles/fork-a-repo/)
+* [Clone your fork](https://help.github.com/articles/cloning-a-repository/)
+
 ### Tools
 In order to use the code in this demo you will need access to the following tools:
 
