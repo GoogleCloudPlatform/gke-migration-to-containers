@@ -118,10 +118,10 @@ gcloud config set compute/zone us-west1-a
 
 Updated property [compute/zone].
 ```
- Where the project name is `my-project-name`:
+ Where the project id is `my-project-id`:
 ```console
 
-gcloud config set project my-project-name
+gcloud config set project my-project-id
 
 Updated property [core/project].
 ```
