@@ -71,6 +71,21 @@ Also included is a utility to validate a successful deployment.
 
 ## Prerequisites
 
+### Run Demo in a Google Cloud Shell
+
+Click the button below to run the demo in a [Google Cloud Shell](https://cloud.google.com/shell/docs/).
+
+[![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?cloudshell_git_repo=https://github.com/GoogleCloudPlatform/gke-migration-to-containers.git&amp;cloudshell_image=gcr.io/graphite-cloud-shell-images/terraform:latest&amp;cloudshell_tutorial=README.md)
+
+
+All the tools for the demo are installed. When using Cloud Shell execute the following
+command in order to setup gcloud cli. When executing this command please setup your region
+and zone.
+
+```console
+gcloud init
+```
+
 ### Get The Code
 
 * [Fork the repo](https://help.github.com/articles/fork-a-repo/)
