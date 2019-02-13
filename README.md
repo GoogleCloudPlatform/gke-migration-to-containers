@@ -151,7 +151,7 @@ make create
 This will:
 1.  Package the deployable `Prime-flask` application.
 1.  Create the container image and push it to the private [Container Registry (GCR)](https://cloud.google.com/container-registry/) for your project.
-1.  Generate an appropriate configuration for [Terraform](terraform.io).
+1.  Generate an appropriate configuration for [Terraform](https://www.terraform.io).
 1.  Execute Terraform which creates the three deployments.
 
 ![screenshot](./images/setup.png)
