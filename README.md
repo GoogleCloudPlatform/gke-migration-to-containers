@@ -4,18 +4,23 @@ Containers are quickly becoming an industry standard for deployment of software 
 
 ## Table of Contents
 <!-- TOC -->
-* [Introduction](#introduction)
-* [Architecture](#architecture)
-* [Prerequisites](#prerequisites)
-  * [Tools](#tools)
-  * [Authenticate gcloud](#authenticate-gcloud)
-  * [Configure gcloud settings](#configure-gcloud-settings)
-* [Deployment](#deployment)
-* [Validation](#validation)
-* [Load Testing](#load-testing)
-* [Tear Down](#tear-down)
-* [More Info](#more-info)
-* [Troubleshooting](#troubleshooting)
+  * [Table of Contents](#table-of-contents)
+  * [Introduction](#introduction)
+  * [Architecture](#architecture)
+  * [Prerequisites](#prerequisites)
+     * [Run Demo in a Google Cloud Shell](#run-demo-in-a-google-cloud-shell)
+     * [Get The Code](#get-the-code)
+     * [Tools](#tools)
+        * [Install Cloud SDK](#install-cloud-sdk)
+        * [Install kubectl CLI](#install-kubectl-cli)
+        * [Install Terraform](#install-terraform)
+     * [Authenticate gcloud](#authenticate-gcloud)
+  * [Deployment](#deployment)
+  * [Validation](#validation)
+  * [Load Testing](#load-testing)
+  * [Tear Down](#tear-down)
+  * [More Info](#more-info)
+  * [Troubleshooting](#troubleshooting)
 <!-- TOC -->
 
 ## Introduction
@@ -104,41 +109,27 @@ In order to use the code in this demo you will need access to the following tool
 * [gcloud](https://cloud.google.com/sdk/gcloud/)
 * [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
+#### Install Cloud SDK
+The Google Cloud SDK is used to interact with your GCP resources.
+[Installation instructions](https://cloud.google.com/sdk/downloads) for multiple platforms are available online.
+
+#### Install kubectl CLI
+
+The kubectl CLI is used to interteract with both Kubernetes Engine and kubernetes in general.
+[Installation instructions](https://cloud.google.com/kubernetes-engine/docs/quickstart)
+for multiple platforms are available online.
+
+#### Install Terraform
+
+Terraform is used to automate the manipulation of cloud infrastructure. Its
+[installation instructions](https://www.terraform.io/intro/getting-started/install.html) are also available online.
+
 ### Authenticate gcloud
 
 Prior to running this demo, ensure you have authenticated your gcloud client by running the following command:
 
 ```console
 gcloud auth application-default login
-```
-
-### Configure gcloud settings
-
-The scripts that manage the infrastructure and deployments for this demo attempt to initialize themselves with values from the `gcloud` config defaults for `compute/zone`, and `core/project`.
-
-Run `gcloud config list` and make sure that `compute/zone`, `compute/region` and `core/project` are populated with values that work for you. You can set their values with the following commands:
-
-Where the region is `us-west1`:
-```console
-
-gcloud config set compute/region us-west1
-
-Updated property [compute/region].
-```
-
- Where the zone inside the region is `us-west1-a`:
-```console
-
-gcloud config set compute/zone us-west1-a
-
-Updated property [compute/zone].
-```
- Where the project name is `my-project-name`:
-```console
-
-gcloud config set project my-project-name
-
-Updated property [core/project].
 ```
 
 ## Deployment
@@ -162,7 +153,7 @@ This will:
 
 ## Validation
 
-Validating these three deployments is done by executing:
+Now that the application is deployed, we can validate these three deployments by executing:
 
 ```console
 make validate
@@ -233,7 +224,13 @@ Notice how the `Failed requests` is now 0. This means that all of the 10,000+ re
 
 ## Tear Down
 
-Deleting the deployments is accomplished by executing `make teardown`. It will run `terraform destroy` which will destroy all of the resources created for this demonstration.
+When you are finished with this example you will want to clean up the resources that were created so that you avoid accruing charges:
+
+```
+$ make teardown
+```
+
+It will run `terraform destroy` which will destroy all of the resources created for this demonstration.
 
 ![screenshot](./images/tear-down.png)
 
