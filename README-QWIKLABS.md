@@ -45,15 +45,25 @@ This project demonstrates migrating a simple Python application named `Prime-fla
 
 After the deployment you'll run a load test against the final deployment and scale it to accommodate the load.
 
+***What you'll learn***
+- Google Kubernetes Engine
+- How to launch a single container on Google Kubernetes Engine
+- How to launch multiple replicas of a single container on Google Kubernetes Engine
+
+
+
 ## Architecture
 
 **Configuration 1:**
+
 ![screenshot](./images/Debian-deployment.png)
 
 **Configuration 2:**
+
 ![screenshot](./images/cos-deployment.png)
 
 **Configuration 3:**
+
 ![screenshot](./images/gke-deployment.png)
 
 A simple Python [Flask](http://flask.pocoo.org/) web application (`Prime-flask`) was created for this demonstration which contains two endpoints:
