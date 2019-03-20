@@ -36,28 +36,29 @@ There are numerous advantages to using containers to deploy applications. Among 
 1. _Lightweight_ - The kernel is shared, making it much smaller and faster than a full OS image.
 
 ***What you'll learn***
-This project demonstrates migrating a simple Python application named `Prime-flask` to:
+This project demonstrates migrating a simple Python application named [Prime-flask](container/prime-flask-server.py) to:
 
-1.  A legacy deployment (Debian VM) where `Prime-flask` is deployed as the only application, much like a traditional application is run in an on-premises datacenter
+1.  A legacy deployment (Debian VM) where [Prime-flask](container/prime-flask-server.py) is deployed as the only application, much like a traditional application is run in an on-premises datacenter
 
-1.  A containerized version of `Prime-flask` is deployed on [Container-Optimized OS (COS)](https://cloud.google.com/container-optimized-os/)
+1.  A containerized version of [Prime-flask](container/prime-flask-server.py) is deployed on [Container-Optimized OS (COS)](https://cloud.google.com/container-optimized-os/)
 
 1.  A [Kubernetes](https://kubernetes.io/) deployment where `Prime-flask` is exposed via a load balancer and deployed in [Kubernetes Engine](https://cloud.google.com/kubernetes-engine/)
 
 After the deployment you'll run a load test against the final deployment and scale it to accommodate the load.
 
+The python app [Prime-flask](container/prime-flask-server.py) has instructions for creating container in [this folder](container).
 
 ## Architecture
 
-**Configuration 1: Single App on Debian virtual machine, no containers**
+**Configuration 1:** Single App on Debian virtual machine, no containers
 
 ![screenshot](./images/Debian-deployment.png)
 
-**Configuration 2: Specialized OS for containers, single virtual machine running containers**
+**Configuration 2:** Specialized OS for containers, single virtual machine running containers
 
 ![screenshot](./images/cos-deployment.png)
 
-**Configuration 3: [Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/) platform, many machines running many containers**
+**Configuration 3:** [Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/) platform, many machines running many containers
 
 ![screenshot](./images/gke-deployment.png)
 
