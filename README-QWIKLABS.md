@@ -140,14 +140,20 @@ make create
 ```
 
 This will:
-1.  Package the deployable `Prime-flask` application.
-1.  Create the container image and push it to the private [Container Registry (GCR)](https://cloud.google.com/container-registry/) for your project.
+1.  Package the deployable `Prime-flask` application, making it ready to be copied to [Google Cloud Storage](https://cloud.google.com/storage/).
+1.  Create the container image via [Google Cloud Build](https://cloud.google.com/cloud-build/) and push it to the private [Container Registry (GCR)](https://cloud.google.com/container-registry/) for your project.
 1.  Generate an appropriate configuration for [Terraform](https://www.terraform.io).
-1.  Execute Terraform which creates the three deployments.
+1.  Execute Terraform which creates the scenarios we outlined above.
+
+Terraform creating single VM, COS VM, and GKE cluster:
 
 ![screenshot](./images/setup.png)
 
+Terraform outputs showing prime and factorial endpoints for Debian VM and COS system: 
+
 ![screenshot](./images/setup-2.png)
+
+Kubernetes Cluster and [Prime-flask](container/prime-flask-server.py) service are up:
 
 ![screenshot](./images/setup-success.png)
 
