@@ -1,6 +1,6 @@
 # Migrating to Containers
 
-Containers are quickly becoming an industry standard for deployment of software applications. The business and technological advantages of containerizing workloads are driving many teams towards moving their applications to containers. This demo provides a basic walkthrough of migrating a stateless application from running on a VM to running on [Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/). It demonstrates the lifecycle of an application transitioning from a typical VM/OS-based deployment to three different containerized cloud infrastructure platforms.
+Containers are quickly becoming an industry standard for deployment of software applications. The business and technological advantages of containerizing workloads are driving many teams towards moving their applications to containers. This demo provides a basic walkthrough of migrating a stateless application from running on a VM to running on [Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/). It demonstrates the lifecycle of an application transitioning from a typical VM/OS-based deployment to a specialized os for containers to a platform for containers better known as [GKE](https://cloud.google.com/kubernetes-engine/).
 
 ## Table of Contents
 <!-- TOC -->
@@ -35,34 +35,29 @@ There are numerous advantages to using containers to deploy applications. Among 
 
 1. _Lightweight_ - The kernel is shared, making it much smaller and faster than a full OS image.
 
+***What you'll learn***
 This project demonstrates migrating a simple Python application named `Prime-flask` to:
 
 1.  A legacy deployment (Debian VM) where `Prime-flask` is deployed as the only application, much like a traditional application is run in an on-premises datacenter
 
-1.  A containerized version deployed on [Container-Optimized OS (COS)](https://cloud.google.com/container-optimized-os/)
+1.  A containerized version of `Prime-flask` is deployed on [Container-Optimized OS (COS)](https://cloud.google.com/container-optimized-os/)
 
 1.  A [Kubernetes](https://kubernetes.io/) deployment where `Prime-flask` is exposed via a load balancer and deployed in [Kubernetes Engine](https://cloud.google.com/kubernetes-engine/)
 
 After the deployment you'll run a load test against the final deployment and scale it to accommodate the load.
 
-***What you'll learn***
-- Google Kubernetes Engine
-- How to launch a single container on Google Kubernetes Engine
-- How to launch multiple replicas of a single container on Google Kubernetes Engine
-
-
 
 ## Architecture
 
-**Configuration 1:**
+**Configuration 1: Single App on Debian virtual machine, no containers**
 
 ![screenshot](./images/Debian-deployment.png)
 
-**Configuration 2:**
+**Configuration 2: Specialized OS for containers, single virtual machine running containers**
 
 ![screenshot](./images/cos-deployment.png)
 
-**Configuration 3:**
+**Configuration 3: [Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/) platform, many machines running many containers**
 
 ![screenshot](./images/gke-deployment.png)
 
