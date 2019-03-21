@@ -16,6 +16,7 @@ Containers are quickly becoming an industry standard for deployment of software 
         * [Install Terraform](#install-terraform)
      * [Authenticate gcloud](#authenticate-gcloud)
   * [Deployment](#deployment)
+  * [Exploring Prime Flask Environments ](#exploring-prime-flask-environments)
   * [Validation](#validation)
   * [Load Testing](#load-testing)
   * [Tear Down](#tear-down)
@@ -139,7 +140,7 @@ The infrastructure required by this project can be deployed by executing:
 make create
 ```
 
-This will:
+This will call script [create.sh](scripts/create.sh) which will perform following tasks:
 1.  Package the deployable `Prime-flask` application, making it ready to be copied to [Google Cloud Storage](https://cloud.google.com/storage/).
 1.  Create the container image via [Google Cloud Build](https://cloud.google.com/cloud-build/) and push it to the private [Container Registry (GCR)](https://cloud.google.com/container-registry/) for your project.
 1.  Generate an appropriate configuration for [Terraform](https://www.terraform.io).
@@ -149,13 +150,82 @@ Terraform creating single VM, COS VM, and GKE cluster:
 
 ![screenshot](./images/setup.png)
 
-Terraform outputs showing prime and factorial endpoints for Debian VM and COS system: 
+Terraform outputs showing prime and factorial endpoints for Debian VM and COS system:
 
 ![screenshot](./images/setup-2.png)
 
 Kubernetes Cluster and [Prime-flask](container/prime-flask-server.py) service are up:
 
 ![screenshot](./images/setup-success.png)
+
+## Exploring Prime Flask Environments
+
+We have now setup three different environments that our [Prime-flask](container/prime-flask-server.py) app could traverse as it is making its way to becoming a container app living on a single virtual machine to a [pod](https://kubernetes.io/docs/concepts/workloads/pods/pod/) running on a container orchestration platform like [Kubernetes](https://kubernetes.io/).
+
+At this point it would benefit you to explore the systems.  
+
+Jump onto the Debian virtual machine, that has application running on host OS. In this environment there is no isolation, and portability is less efficient. In a sense the app running on the system has access to all the system and depending on other factors may not have automatic recovery of application if it fails. Scaling up this application may require to spin up more virtual machines and most likely will not be best use of resources.
+```
+gcloud compute ssh vm-webserver
+```
+
+List all processes:
+```
+ps -ef
+```
+```
+root      3161   684  0 07:00 ?        00:00:00 sshd: user [priv]
+user      3167  3161  0 07:00 ?        00:00:00 sshd: user@pts/0
+user      3168  3167  0 07:00 pts/0    00:00:00 -bash
+user      3174  3168  0 07:00 pts/0    00:00:00 ps -ef
+apprunn+  7938     1  0 Mar19 ?        00:00:31 /usr/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+apprunn+ 21662  7938  0 Mar20 ?        00:00:01 /usr/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+```
+
+Jump onto the [Container-Optimized OS (COS)](https://cloud.google.com/container-optimized-os/). COS is an optimized operating system with small OS footprint, which is part of what makes it secure to run container workloads. It has cloud-init and has Docker runt time preinstalled. This system on its own could be great to run several containers that did not need to be run on a platform that provided higher levels of reliability.
+
+```
+gcloud compute ssh cos-vm
+```
+
+Docker list containers
+```
+docker ps
+```
+```
+CONTAINER ID        IMAGE                                                  COMMAND                  CREATED             STATUS              PORTS                    NAMES
+d147963ec3ca        gcr.io/cxh-migration-to-containers/prime-flask:1.0.2   "/usr/bin/dumb-init …"   39 hours ago        Up 39 hours         0.0.0.0:8080->8080/tcp   flaskservice
+```
+
+Jump on to [Kubernetes](https://kubernetes.io/). In this environment we can run hundreds or thousands of [pods](https://kubernetes.io/docs/concepts/workloads/pods/pod/) that are groupings of containers. Kubernetes is the defacto standard for deploying containers these days. It offers high productivity, reliability, and scalability. Kubernetes makes sure your containers have a home, and if container happens to fail, it will respawn it again. You can have many machines making up the cluster and in so doing you can spread it across different zones ensuring availability, and resilience to potential issues.
+
+Get cluster configuration:
+```
+gcloud container clusters get-credentials prime-server-cluster
+```
+
+Get pods running in the default namespace:
+```
+kubectl get pods
+```
+```
+NAME                            READY   STATUS    RESTARTS   AGE
+prime-server-6b94cdfc8b-dfckf   1/1     Running   0          2d5h
+```
+
+See what is running on the pod:
+```
+kubectl exec prime-server-6b94cdfc8b-dfckf -- ps -ef
+```
+```
+PID   USER     TIME  COMMAND
+    1 apprunne  0:00 /usr/bin/dumb-init /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+    6 apprunne  0:36 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+    8 apprunne  1:20 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+    9 apprunne  0:00 ps -ef
+```
+
+As you can see from last example, the our python application is now running in a container only running its process, and cannot see other processes. It is also running in a namespace which can further restrict it from other containers running on the system. 
 
 ## Validation
 
