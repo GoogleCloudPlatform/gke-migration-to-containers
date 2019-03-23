@@ -39,7 +39,7 @@ There are numerous advantages to using containers to deploy applications. Among 
 ***What you'll learn***
 This project demonstrates migrating a simple Python application named [Prime-flask](container/prime-flask-server.py) to:
 
-1.  A legacy deployment (Debian VM) where [Prime-flask](container/prime-flask-server.py) is deployed as the only application, much like a traditional application is run in an on-premises datacenter
+1.  A [virtual machine (Debian VM)](https://cloud.google.com/compute/docs/instances/) where [Prime-flask](container/prime-flask-server.py) is deployed as the only application, much like a traditional application is run in an on-premises datacenter
 
 1.  A containerized version of [Prime-flask](container/prime-flask-server.py) is deployed on [Container-Optimized OS (COS)](https://cloud.google.com/container-optimized-os/)
 
@@ -51,11 +51,11 @@ The python app [Prime-flask](container/prime-flask-server.py) has instructions f
 
 ## Architecture
 
-**Configuration 1:** Single App on Debian virtual machine, no containers
+**Configuration 1:** Single App on Debian [virtual machine](https://cloud.google.com/compute/docs/instances/), no containers
 
 ![screenshot](./images/Debian-deployment.png)
 
-**Configuration 2:** Specialized OS for containers, single virtual machine running containers
+**Configuration 2:** [Specialized OS for containers](https://cloud.google.com/container-optimized-os/), single virtual machine running containers
 
 ![screenshot](./images/cos-deployment.png)
 
@@ -166,66 +166,94 @@ At this point it would benefit you to explore the systems.
 
 Jump onto the Debian virtual machine, that has application running on host OS. In this environment there is no isolation, and portability is less efficient. In a sense the app running on the system has access to all the system and depending on other factors may not have automatic recovery of application if it fails. Scaling up this application may require to spin up more virtual machines and most likely will not be best use of resources.
 ```
-gcloud compute ssh vm-webserver
+gcloud compute ssh vm-webserver --zone us-west1-c
 ```
 
 List all processes:
+```bash
+ps aux
 ```
-ps -ef
-```
-```
-root      3161   684  0 07:00 ?        00:00:00 sshd: user [priv]
-user      3167  3161  0 07:00 ?        00:00:00 sshd: user@pts/0
-user      3168  3167  0 07:00 pts/0    00:00:00 -bash
-user      3174  3168  0 07:00 pts/0    00:00:00 ps -ef
-apprunn+  7938     1  0 Mar19 ?        00:00:31 /usr/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
-apprunn+ 21662  7938  0 Mar20 ?        00:00:01 /usr/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+```bash
+root       882  0.0  1.1  92824  6716 ?        Ss   18:41   0:00 sshd: user [priv]
+user       888  0.0  0.6  92824  4052 ?        S    18:41   0:00 sshd: user@pts/0
+user       889  0.0  0.6  19916  3880 pts/0    Ss   18:41   0:00 -bash
+user       895  0.0  0.5  38304  3176 pts/0    R+   18:41   0:00 ps aux
+apprunn+  7938  0.0  3.3  48840 20328 ?        Ss   Mar19   1:06 /usr/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+apprunn+ 21662  0.0  3.9  69868 24032 ?        S    Mar20   0:05 /usr/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
 ```
 
 Jump onto the [Container-Optimized OS (COS)](https://cloud.google.com/container-optimized-os/). COS is an optimized operating system with small OS footprint, which is part of what makes it secure to run container workloads. It has cloud-init and has Docker runt time preinstalled. This system on its own could be great to run several containers that did not need to be run on a platform that provided higher levels of reliability.
 
+```bash
+gcloud compute ssh cos-vm --zone us-west1-c
 ```
-gcloud compute ssh cos-vm
+
+We can also run `ps aux` on the host and see the prime-flask running, but notice docker and container references:
+```bash
+root         626  0.0  5.7 496812 34824 ?        Ssl  Mar19   0:14 /usr/bin/docker run --rm --name=flaskservice -p 8080:8080 gcr.io/cxh-migration-to-containers/prime-flask:1.0.2
+root         719  0.0  0.5 305016  3276 ?        Sl   Mar19   0:00 /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 8080 -container-ip 172.17.0.2 -container-port 8080
+root         724  0.0  0.8 614804  5104 ?        Sl   Mar19   0:09 docker-containerd-shim -namespace moby -workdir /var/lib/docker/containerd/daemon/io.containerd.runtime.v1.linux/mo
+chronos      741  0.0  0.0    204     4 ?        Ss   Mar19   0:00 /usr/bin/dumb-init /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+chronos      774  0.0  3.2  21324 19480 ?        Ss   Mar19   1:25 /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+chronos    14376  0.0  4.0  29700 24452 ?        S    Mar20   0:05 /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+```
+
+Also notice if we try to list the python path it does not exist:
+```bash
+ls /usr/local/bin/python
+ls: cannot access '/usr/local/bin/python': No such file or directory
 ```
 
 Docker list containers
-```
+```bash
 docker ps
 ```
-```
+```bash
 CONTAINER ID        IMAGE                                                  COMMAND                  CREATED             STATUS              PORTS                    NAMES
 d147963ec3ca        gcr.io/cxh-migration-to-containers/prime-flask:1.0.2   "/usr/bin/dumb-init …"   39 hours ago        Up 39 hours         0.0.0.0:8080->8080/tcp   flaskservice
+```
+
+Now we can exec a command to see running process on the container:
+```bash
+docker exec -it $(docker ps |awk '/prime-flask/ {print $1}') ps aux
+```
+```bash
+PID   USER     TIME  COMMAND
+    1 apprunne  0:00 /usr/bin/dumb-init /usr/local/bin/gunicorn --bind 0.0.0.0:
+    6 apprunne  1:25 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn -
+   17 apprunne  0:05 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn -
+   29 apprunne  0:00 ps aux
 ```
 
 Jump on to [Kubernetes](https://kubernetes.io/). In this environment we can run hundreds or thousands of [pods](https://kubernetes.io/docs/concepts/workloads/pods/pod/) that are groupings of containers. Kubernetes is the defacto standard for deploying containers these days. It offers high productivity, reliability, and scalability. Kubernetes makes sure your containers have a home, and if container happens to fail, it will respawn it again. You can have many machines making up the cluster and in so doing you can spread it across different zones ensuring availability, and resilience to potential issues.
 
 Get cluster configuration:
-```
+```bash
 gcloud container clusters get-credentials prime-server-cluster
 ```
 
 Get pods running in the default namespace:
-```
+```bash
 kubectl get pods
 ```
-```
+```bash
 NAME                            READY   STATUS    RESTARTS   AGE
 prime-server-6b94cdfc8b-dfckf   1/1     Running   0          2d5h
 ```
 
 See what is running on the pod:
+```bash
+kubectl exec $(kubectl get pods -lapp=prime-server -ojsonpath='{.items[].metadata.name}')  -- ps aux
 ```
-kubectl exec prime-server-6b94cdfc8b-dfckf -- ps -ef
-```
-```
+```bash
 PID   USER     TIME  COMMAND
     1 apprunne  0:00 /usr/bin/dumb-init /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
-    6 apprunne  0:36 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
-    8 apprunne  1:20 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
-    9 apprunne  0:00 ps -ef
+    6 apprunne  1:16 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+    8 apprunne  2:52 {gunicorn} /usr/local/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
+   19 apprunne  0:00 ps aux
 ```
 
-As you can see from last example, the our python application is now running in a container only running its process, and cannot see other processes. It is also running in a namespace which can further restrict it from other containers running on the system. 
+As you can see from last example, the our python application is now running in a container only running its process, and cannot see other processes. It is also running in a namespace which can further restrict it from other containers running on the system.
 
 ## Validation
 
