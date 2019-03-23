@@ -162,7 +162,7 @@ Kubernetes Cluster and [Prime-flask](container/prime-flask-server.py) service ar
 
 We have now setup three different environments that our [Prime-flask](container/prime-flask-server.py) app could traverse as it is making its way to becoming a container app living on a single virtual machine to a [pod](https://kubernetes.io/docs/concepts/workloads/pods/pod/) running on a container orchestration platform like [Kubernetes](https://kubernetes.io/).
 
-At this point it would benefit you to explore the systems.  
+At this point it would benefit you to explore the systems.
 
 Jump onto the Debian virtual machine, that has application running on host OS. In this environment there is no isolation, and portability is less efficient. In a sense the app running on the system has access to all the system and depending on other factors may not have automatic recovery of application if it fails. Scaling up this application may require to spin up more virtual machines and most likely will not be best use of resources.
 ```
