@@ -97,42 +97,6 @@ gcloud init
 * [Fork the repo](https://help.github.com/articles/fork-a-repo/)
 * [Clone your fork](https://help.github.com/articles/cloning-a-repository/)
 
-### Tools
-In order to use the code in this demo you will need access to the following tools:
-
-* A bash, or bash-compatible, shell
-* Access to an existing Google Cloud project with the
-[Kubernetes Engine v1.10.0 or later](https://cloud.google.com/kubernetes-engine/docs/quickstart#before-you-begin) service enabled
-* If you do not have a Google Cloud Platform account you can sign up [here](https://cloud.google.com) and get 300 dollars of free credit on your new account.
-* [Google Cloud SDK (200.0.0 or later)](https://cloud.google.com/sdk/downloads)
-* [ApacheBench](https://httpd.apache.org/docs/2.4/programs/ab.html)
-* [HashiCorp Terraform (>= v0.11.7)](https://www.terraform.io/downloads.html)
-* [gcloud](https://cloud.google.com/sdk/gcloud/)
-* [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-
-#### Install Cloud SDK
-The Google Cloud SDK is used to interact with your GCP resources.
-[Installation instructions](https://cloud.google.com/sdk/downloads) for multiple platforms are available online.
-
-#### Install kubectl CLI
-
-The kubectl CLI is used to interteract with both Kubernetes Engine and kubernetes in general.
-[Installation instructions](https://cloud.google.com/kubernetes-engine/docs/quickstart)
-for multiple platforms are available online.
-
-#### Install Terraform
-
-Terraform is used to automate the manipulation of cloud infrastructure. Its
-[installation instructions](https://www.terraform.io/intro/getting-started/install.html) are also available online.
-
-### Authenticate gcloud
-
-Prior to running this demo, ensure you have authenticated your gcloud client by running the following command:
-
-```console
-gcloud auth application-default login
-```
-
 ## Deployment
 
 The infrastructure required by this project can be deployed by executing:
