@@ -51,11 +51,11 @@ The python app [Prime-flask](container/prime-flask-server.py) has instructions f
 
 ## Architecture
 
-**Configuration 1:** Single App on Debian [virtual machine](https://cloud.google.com/compute/docs/instances/), no containers
+**Configuration 1:** [Virtual machine](https://cloud.google.com/compute/docs/instances/) running Debian, app deployed directly to the host OS, no containers
 
 ![screenshot](./images/Debian-deployment.png)
 
-**Configuration 2:** [Specialized OS for containers](https://cloud.google.com/container-optimized-os/), single virtual machine running containers
+**Configuration 2:** Virtual machine running [Container-Optimized OS](https://cloud.google.com/container-optimized-os/), app deployed into a container
 
 ![screenshot](./images/cos-deployment.png)
 
@@ -128,7 +128,7 @@ We have now setup three different environments that our [Prime-flask](container/
 
 At this point it would benefit you to explore the systems.
 
-Jump onto the Debian virtual machine, that has application running on host OS. In this environment there is no isolation, and portability is less efficient. In a sense the app running on the system has access to all the system and depending on other factors may not have automatic recovery of application if it fails. Scaling up this application may require to spin up more virtual machines and most likely will not be best use of resources.
+Jump onto the Debian [virtual machine](https://cloud.google.com/compute/docs/instances/), `vm-webserver`, that has application running on host OS. In this environment there is no isolation, and portability is less efficient. In a sense the app running on the system has access to all the system and depending on other factors may not have automatic recovery of application if it fails. Scaling up this application may require to spin up more virtual machines and most likely will not be best use of resources.
 ```
 gcloud compute ssh vm-webserver --zone us-west1-c
 ```
@@ -146,7 +146,7 @@ apprunn+  7938  0.0  3.3  48840 20328 ?        Ss   Mar19   1:06 /usr/bin/python
 apprunn+ 21662  0.0  3.9  69868 24032 ?        S    Mar20   0:05 /usr/bin/python /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
 ```
 
-Jump onto the [Container-Optimized OS (COS)](https://cloud.google.com/container-optimized-os/). COS is an optimized operating system with small OS footprint, which is part of what makes it secure to run container workloads. It has cloud-init and has Docker runt time preinstalled. This system on its own could be great to run several containers that did not need to be run on a platform that provided higher levels of reliability.
+Jump onto the [Container-Optimized OS (COS)](https://cloud.google.com/container-optimized-os/) machine, `cos-vm`, where we have docker running the container. COS is an optimized operating system with small OS footprint, which is part of what makes it secure to run container workloads. It has cloud-init and has Docker runt time preinstalled. This system on its own could be great to run several containers that did not need to be run on a platform that provided higher levels of reliability.
 
 ```bash
 gcloud compute ssh cos-vm --zone us-west1-c
@@ -154,7 +154,7 @@ gcloud compute ssh cos-vm --zone us-west1-c
 
 We can also run `ps aux` on the host and see the prime-flask running, but notice docker and container references:
 ```bash
-root         626  0.0  5.7 496812 34824 ?        Ssl  Mar19   0:14 /usr/bin/docker run --rm --name=flaskservice -p 8080:8080 gcr.io/cxh-migration-to-containers/prime-flask:1.0.2
+root         626  0.0  5.7 496812 34824 ?        Ssl  Mar19   0:14 /usr/bin/docker run --rm --name=flaskservice -p 8080:8080 gcr.io/migration-to-containers/prime-flask:1.0.2
 root         719  0.0  0.5 305016  3276 ?        Sl   Mar19   0:00 /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 8080 -container-ip 172.17.0.2 -container-port 8080
 root         724  0.0  0.8 614804  5104 ?        Sl   Mar19   0:09 docker-containerd-shim -namespace moby -workdir /var/lib/docker/containerd/daemon/io.containerd.runtime.v1.linux/mo
 chronos      741  0.0  0.0    204     4 ?        Ss   Mar19   0:00 /usr/bin/dumb-init /usr/local/bin/gunicorn --bind 0.0.0.0:8080 prime-flask-server
@@ -174,7 +174,7 @@ docker ps
 ```
 ```bash
 CONTAINER ID        IMAGE                                                  COMMAND                  CREATED             STATUS              PORTS                    NAMES
-d147963ec3ca        gcr.io/cxh-migration-to-containers/prime-flask:1.0.2   "/usr/bin/dumb-init …"   39 hours ago        Up 39 hours         0.0.0.0:8080->8080/tcp   flaskservice
+d147963ec3ca        gcr.io/migration-to-containers/prime-flask:1.0.2   "/usr/bin/dumb-init …"   39 hours ago        Up 39 hours         0.0.0.0:8080->8080/tcp   flaskservice
 ```
 
 Now we can exec a command to see running process on the container:
@@ -217,7 +217,7 @@ PID   USER     TIME  COMMAND
    19 apprunne  0:00 ps aux
 ```
 
-As you can see from last example, the our python application is now running in a container only running its process, and cannot see other processes. It is also running in a namespace which can further restrict it from other containers running on the system.
+As you can see from the last example, python application is now running in a container. The application can't access anything on the host. The container is isolated. It runs in a linux namespace and can't (by default) access files, the network, or other resources running on the VM, in containers or otherwise.
 
 ## Validation
 
