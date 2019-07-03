@@ -35,7 +35,7 @@ variable "replicas" {
   default = "1"
 }
 
-variable "version" {
+variable "ver" {
   type = "string"
 }
 

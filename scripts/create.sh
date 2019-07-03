@@ -33,7 +33,7 @@ run_terraform() {
 
   (cd "$ROOT/terraform"; terraform init -input=false)
   (cd "$ROOT/terraform"; terraform apply -input=false -auto-approve \
-    -var version="$VERSION")
+    -var ver="$VERSION")
 }
 
 wait_for_cluster() {

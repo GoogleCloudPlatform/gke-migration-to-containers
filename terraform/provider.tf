@@ -21,13 +21,13 @@ limitations under the License.
 
 
 provider "google" {
-  version = "~> v1.16"
+  version = "~> v2.9.1"
 }
 
 provider "null" {
-  version = "~> 1.0"
+  version = "~> 2.1.2"
 }
 
 provider "template" {
-  version = "~> 1.0"
+  version = "~> 2.1.2"
 }

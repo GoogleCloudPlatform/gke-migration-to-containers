@@ -14,24 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 output "prime_web_server" {
-  value = "http://${google_compute_instance.web_server.network_interface.0.access_config.0.assigned_nat_ip}:8080/prime"
+  value = "http://${google_compute_instance.web_server.network_interface.0.access_config.0.nat_ip}:8080/prime"
 }
 
 output "factorial_web_server" {
-  value = "http://${google_compute_instance.web_server.network_interface.0.access_config.0.assigned_nat_ip}:8080/factorial"
+  value = "http://${google_compute_instance.web_server.network_interface.0.access_config.0.nat_ip}:8080/factorial"
 }
 
 output "web_server_address" {
-  value = "http://${google_compute_instance.web_server.network_interface.0.access_config.0.assigned_nat_ip}:8080"
+  value = "http://${google_compute_instance.web_server.network_interface.0.access_config.0.nat_ip}:8080"
 }
 output "prime_cos_server" {
-  value = "http://${google_compute_instance.container_server.network_interface.0.access_config.0.assigned_nat_ip}:8080/prime"
+  value = "http://${google_compute_instance.container_server.network_interface.0.access_config.0.nat_ip}:8080/prime"
 }
 
 output "factorial_cos_server" {
-  value = "http://${google_compute_instance.container_server.network_interface.0.access_config.0.assigned_nat_ip}:8080/factorial"
+  value = "http://${google_compute_instance.container_server.network_interface.0.access_config.0.nat_ip}:8080/factorial"
 }
 
 output "cos_server_address" {
-  value = "http://${google_compute_instance.container_server.network_interface.0.access_config.0.assigned_nat_ip}:8080"
+  value = "http://${google_compute_instance.container_server.network_interface.0.access_config.0.nat_ip}:8080"
 }
