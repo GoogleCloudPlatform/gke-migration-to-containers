@@ -27,4 +27,4 @@ rm -f "${ROOT}/terraform/manifests/prime-server-deployment.yaml"
 check_dependency_installed terraform
 
 (cd "${ROOT}/terraform" && terraform destroy \
-   -var version="$VERSION" -auto-approve)
+   -var ver="$VERSION" -auto-approve)

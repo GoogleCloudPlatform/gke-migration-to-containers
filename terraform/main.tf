@@ -79,7 +79,7 @@ EOF
 
   vars {
     project      = "${var.project}"
-    version      = "${var.version}"
+    version      = "${var.ver}"
   }
 }
 
@@ -169,7 +169,7 @@ EOF
 
   vars {
     project   = "${var.project}"
-    version   = "${var.version}"
+    version   = "${var.ver}"
     replicas  = "${var.replicas}"
   }
 }
@@ -208,7 +208,7 @@ resource "google_storage_bucket" "artifact_store" {
 
 // https://www.terraform.io/docs/providers/google/r/storage_bucket_object.html
 resource "google_storage_bucket_object" "artifact" {
-  name          = "${var.version}/flask-prime.tgz"
+  name          = "${var.ver}/flask-prime.tgz"
   source        = "../build/flask-prime.tgz"
   bucket        = "${google_storage_bucket.artifact_store.name}"
   // TODO: ignore lifecycle something so old versions don't get deleted
@@ -218,7 +218,7 @@ data "template_file" "web_init" {
   template = "${file("${path.module}/web-init.sh.tmpl")}"
   vars {
     bucket  = "${var.project}-vm-artifacts"
-    version = "${var.version}"
+    version = "${var.ver}"
   }
 }
 
