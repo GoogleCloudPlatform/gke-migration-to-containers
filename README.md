@@ -103,9 +103,9 @@ In order to use the code in this demo you will need access to the following tool
 * Access to an existing Google Cloud project with the
 [Kubernetes Engine v1.10.0 or later](https://cloud.google.com/kubernetes-engine/docs/quickstart#before-you-begin) service enabled
 * If you do not have a Google Cloud Platform account you can sign up [here](https://cloud.google.com) and get 300 dollars of free credit on your new account.
-* [Google Cloud SDK (200.0.0 or later)](https://cloud.google.com/sdk/downloads)
+* [Google Cloud SDK version >= 253.0.0](https://cloud.google.com/sdk/docs/downloads-versioned-archives)
 * [ApacheBench](https://httpd.apache.org/docs/2.4/programs/ab.html)
-* [HashiCorp Terraform (>= v0.11.7)](https://www.terraform.io/downloads.html)
+* [Hashicorp Terraform >= 0.12.3](https://www.terraform.io/downloads.html)
 * [gcloud](https://cloud.google.com/sdk/gcloud/)
 * [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 

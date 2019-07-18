@@ -14,19 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// provider.tf - by convention, this is the file where providers are defined.
-// All data sources and resources are dependent on a provider.  Here, we
-// specify the version of the Google Cloud Provider that was used to
-// develop this example.
-
-provider "google" {
-  version = "~> v2.11.0"
-}
-
-provider "null" {
-  version = "~> 2.1.2"
-}
-
-provider "template" {
-  version = "~> 2.1.2"
+terraform {
+  required_version = ">= 0.12"
 }

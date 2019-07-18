@@ -17,28 +17,28 @@ limitations under the License.
 // variables.tf - this is where all variables are defined.  The user must
 // provide these for any invocation of `terraform plan`, `apply`, or `destroy`.
 
-
 variable "cluster_name" {
   description = "The Kubernetes Engine cluster name"
-  default = "prime-server-cluster"
+  default     = "prime-server-cluster"
 }
+
 variable "machine_type" {
   default = "f1-micro"
 }
 
 variable "project" {
-  type = "string"
+  type = string
 }
 
 variable "replicas" {
   description = "Number of prime server replicas to create"
-  default = "1"
+  default     = "1"
 }
 
 variable "ver" {
-  type = "string"
+  type = string
 }
 
 variable "zone" {
-  type = "string"
+  type = string
 }
