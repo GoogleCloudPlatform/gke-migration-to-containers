@@ -24,7 +24,7 @@ provider "google" {
 }
 
 provider "null" {
-  version = "~> 2.1.2"
+  version = "~> 3.1.0"
 }
 
 provider "template" {
