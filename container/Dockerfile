@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.7-alpine
+FROM python:3.9-alpine
 
 ARG BUILD_DATE
 ARG VCS_REF
