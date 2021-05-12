@@ -19,14 +19,19 @@ limitations under the License.
 // specify the version of the Google Cloud Provider that was used to
 // develop this example.
 
-provider "google" {
-  version = "~> v2.11.0"
-}
+terraform {
+  required_providers {
+    google = {
+      version = "~> 2.11.0"
+    }
 
-provider "null" {
-  version = "~> 2.1.2"
-}
+    null = {
+      version = "~> 2.1.2"
+    }
 
-provider "template" {
-  version = "~> 2.1.2"
+
+    template = {
+      version = "~> 2.1.2"
+    }
+  }
 }
