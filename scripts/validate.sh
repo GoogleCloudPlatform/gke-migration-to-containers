@@ -128,11 +128,17 @@ check_dependency_installed terraform
 echo ""
 echo "Validating Debian VM Webapp..."
 SERVER_ADDRESS=$(cd "$ROOT/terraform" && terraform output web_server_address)
+# Remove surrounding quotes from URL
+SERVER_ADDRESS="${SERVER_ADDRESS%\"}"
+SERVER_ADDRESS="${SERVER_ADDRESS#\"}"
 validate_deployment "$SERVER_ADDRESS"
 
 echo ""
 echo "Validating Container OS Webapp..."
 SERVER_ADDRESS=$(cd "$ROOT/terraform" && terraform output cos_server_address)
+# Remove surrounding quotes from URL
+SERVER_ADDRESS="${SERVER_ADDRESS%\"}"
+SERVER_ADDRESS="${SERVER_ADDRESS#\"}"
 validate_deployment "$SERVER_ADDRESS"
 
 echo ""
