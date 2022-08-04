@@ -90,7 +90,7 @@ EOF
 resource "google_compute_instance" "container_server" {
   name = "cos-vm"
   machine_type = var.machine_type
-  zone = var.zone
+  zone = var.cos_vm_zone
   project = var.project
 
   tags = ["flask-web"]
@@ -225,7 +225,7 @@ resource "google_compute_instance" "web_server" {
 project      = var.project
 name         = "vm-webserver"
 machine_type = var.machine_type
-zone         = var.zone
+zone         = var.webserver_vm_zone
 
 tags = ["flask-web"]
 
