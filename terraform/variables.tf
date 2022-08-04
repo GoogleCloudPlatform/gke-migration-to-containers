@@ -42,3 +42,13 @@ variable "ver" {
 variable "zone" {
   type = string
 }
+
+variable "cos_vm_zone" {
+  type = string
+  default = "us-east1-b"
+}
+
+variable "webserver_vm_zone" {
+  type = string
+  default = "us-west3-a"
+}
