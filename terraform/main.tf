@@ -123,10 +123,29 @@ resource "google_compute_instance" "container_server" {
 // https://www.terraform.io/docs/providers/google/r/container_cluster.html
 resource "google_container_cluster" "prime_cluster" {
   name = var.cluster_name
-  zone = var.zone
+  location = var.zone
   project = var.project
-  min_master_version = data.google_container_engine_versions.on-prem.latest_master_version
-  initial_node_count = 2
+  remove_default_node_pool = true
+  # min_master_version = data.google_container_engine_versions.on-prem.latest_master_version
+  initial_node_count = 1
+}
+
+resource "google_container_node_pool" "primary_preemptible_nodes" {
+  name       = "my-node-pool"
+  location   = var.zone
+  cluster    = google_container_cluster.prime_cluster.name
+  node_count = 1
+
+  node_config {
+    preemptible  = true
+    machine_type = "e2-standard-2"
+
+    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
+    service_account = var.computeSA
+    oauth_scopes    = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+  }
 }
 
 // Create a deployment manifest with the appropriate values
