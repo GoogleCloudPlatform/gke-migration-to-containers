@@ -241,6 +241,8 @@ For additional information see: [Embarking on a Journey Towards Containerizing Y
 
 Occasionally the APIs take a few moments to complete. Running `make validate` immediately could potentially appear to fail, but in fact the instances haven't finished initializing. Waiting for a minute or two should resolve the issue.
 
+If you do get an error of "make: *** No rule to make target 'validate'. Stop." error while running 'make validate', navigate to the gke-migration-to-containers folder and try again.
+
 The setup of this demo **does** take up to **15** minutes. If there is no error the best thing to do is keep waiting. The execution of `make create` should **not** be interrupted.
 
 If you do get an error, it probably makes sense to re-execute the failing script. Occasionally there are network connectivity issues, and retrying will likely work the subsequent time.
