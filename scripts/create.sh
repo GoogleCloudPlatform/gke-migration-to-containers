@@ -172,9 +172,9 @@ check_dependency_installed terraform
 
 # Enable required GCP services
 get_project
-enable_project_api "${PROJECT}" compute.googleapis.com
-enable_project_api "${PROJECT}" container.googleapis.com
-enable_project_api "${PROJECT}" cloudbuild.googleapis.com
+# enable_project_api "${PROJECT}" compute.googleapis.com
+# enable_project_api "${PROJECT}" container.googleapis.com
+# enable_project_api "${PROJECT}" cloudbuild.googleapis.com
 
 run_build
 
