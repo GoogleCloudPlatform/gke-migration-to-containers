@@ -24,7 +24,7 @@ sudo adduser apprunner
 
 # Download the artifact
 sudo mkdir /prime
-gsutil cp gs://${bucket}/${version}/flask-prime.tgz /prime/flask-prime.tgz
+gcloud storage cp gs://${bucket}/${version}/flask-prime.tgz /prime/flask-prime.tgz
 cd /prime
 sudo tar xzvf flask-prime.tgz
 sudo /prime/install.sh
