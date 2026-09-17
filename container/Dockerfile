@@ -31,7 +31,7 @@ COPY prime-flask-server.py requirements.txt /opt/
 
 RUN adduser -D apprunner && \
     apk add --no-cache \
-    bash=5.1.16-r2 \
+    bash=5.3.9-r1 \
     dumb-init=1.2.5-r1 && \
     pip3 install -r /opt/requirements.txt && \
     chown -R apprunner:apprunner /opt/
